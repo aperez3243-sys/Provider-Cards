@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Provider Baseball Cards</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f0f2f5;min-height:100vh;padding:20px;}
+  /* ── Directory ── */
+  #directory{max-width:700px;margin:0 auto;}
+  .dir-header{background:#1a3a5c;color:#fff;border-radius:12px 12px 0 0;padding:18px 24px;}
+  .dir-header h1{font-size:20px;font-weight:600;}
+  .dir-header p{font-size:12px;opacity:0.7;margin-top:4px;}
+  .dir-list{background:#fff;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid #dde3ed;border-top:none;}
+  .dir-item{display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid #eef0f4;cursor:pointer;transition:background 0.15s;gap:14px;}
+  .dir-item:last-child{border-bottom:none;}
+  .dir-item:hover{background:#f5f8ff;}
+  .dir-avatar{width:42px;height:42px;border-radius:50%;background:#1a3a5c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;flex-shrink:0;}
+  .dir-info{flex:1;}
+  .dir-name{font-size:14px;font-weight:600;color:#1a3a5c;}
+  .dir-sub{font-size:12px;color:#7a8599;margin-top:2px;}
+  .dir-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0;}
+  .dir-arrow{color:#c0c8d8;font-size:16px;}
+
+  /* ── Card ── */
+  #card-view{display:none;max-width:700px;margin:0 auto;}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;color:#1a3a5c;font-size:13px;cursor:pointer;margin-bottom:12px;padding:6px 0;}
+  .back-btn:hover{opacity:0.7;}
+  .card{background:#fff;border:1.5px solid #dde3ed;border-radius:12px;overflow:hidden;}
+  .card-header{background:#1a3a5c;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;}
+  .card-header .practice-name{font-size:15px;font-weight:500;}
+  .card-header .card-number{font-size:11px;opacity:0.65;}
+  .card-top{display:grid;grid-template-columns:160px 1fr;border-bottom:1.5px solid #eef0f4;}
+  .photo-col{border-right:1.5px solid #eef0f4;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;gap:6px;background:#f8f9fb;}
+  .decision-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.8px;color:#bf8c00;background:#faeeda;border:0.5px solid #ef9f27;border-radius:20px;padding:2px 10px;}
+  .avatar{width:72px;height:72px;border-radius:50%;background:#1a3a5c;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:#fff;}
+  .specialty-badge{background:#1a3a5c;color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;margin-top:2px;text-align:center;}
+  .info-col{padding:14px 16px;}
+  .section-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:#7a8599;margin:10px 0 5px;}
+  .section-label:first-child{margin-top:0;}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .stat-box{background:#f8f9fb;border-radius:7px;padding:6px 10px;}
+  .stat-label{font-size:10px;color:#7a8599;}
+  .stat-val{font-size:13px;font-weight:500;color:#1a1f2e;}
+  .card-mid{border-bottom:1.5px solid #eef0f4;padding:14px 16px;}
+  .tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
+  .tag{font-size:11px;padding:3px 9px;border-radius:20px;background:#f0f2f5;color:#4a5568;border:0.5px solid #dde3ed;}
+  .tag.yes{background:#eaf3de;color:#3b6d11;border-color:#97c459;}
+  .tag.no{background:#fcebeb;color:#a32d2d;border-color:#f09595;}
+  .ins-tag{font-size:11px;padding:3px 9px;border-radius:20px;background:#eaf3de;color:#3b6d11;border:0.5px solid #97c459;}
+  .hosp-tag{font-size:11px;padding:3px 9px;border-radius:20px;background:#f0f2f5;color:#4a5568;border:0.5px solid #dde3ed;}
+  .rtm-row{display:flex;align-items:center;gap:8px;margin-top:6px;}
+  .rtm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .rtm-text{font-size:13px;color:#1a1f2e;}
+  .rtm-select{font-size:12px;padding:4px 8px;border-radius:7px;border:1px solid #dde3ed;background:#f8f9fb;color:#1a1f2e;cursor:pointer;}
+  .card-bottom{padding:14px 16px;}
+  .notes-area{width:100%;background:#f8f9fb;border-radius:8px;padding:10px 12px;font-size:12px;color:#1a1f2e;min-height:90px;border:1px dashed #c8d0df;resize:vertical;font-family:inherit;line-height:1.6;}
+  .notes-area:focus{outline:none;border-color:#378add;}
+  .card-footer{background:#1a3a5c;color:rgba(255,255,255,0.65);font-size:10px;padding:6px 16px;display:flex;justify-content:space-between;}
+  [contenteditable]{cursor:text;border-radius:3px;padding:1px 2px;transition:background 0.15s;}
+  [contenteditable]:hover{background:rgba(55,138,221,0.08);}
+  [contenteditable]:focus{outline:none;background:rgba(55,138,221,0.12);box-shadow:0 0 0 1.5px #378add;}
+  .edit-hint{font-size:10px;color:#7a8599;font-style:italic;margin-left:4px;}
+  .key-attr-input{font-size:11px;padding:4px 9px;border-radius:20px;border:1px dashed #c8d0df;background:#f8f9fb;color:#4a5568;width:140px;font-family:inherit;}
+  .key-attr-input:focus{outline:none;border-color:#378add;}
+  .add-btn{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid #dde3ed;background:transparent;color:#4a5568;cursor:pointer;}
+  .add-btn:hover{background:#f0f2f5;}
+  .tag-del,.ins-tag-del,.hosp-tag-del{cursor:pointer;font-size:13px;opacity:0.45;border:none;background:none;padding:0;color:inherit;margin-left:4px;}
+  .tag-del:hover,.ins-tag-del:hover,.hosp-tag-del:hover{opacity:1;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:520px){
+    .card-top{grid-template-columns:1fr;}
+    .photo-col{border-right:none;border-bottom:1.5px solid #eef0f4;flex-direction:row;justify-content:flex-start;padding:12px 16px;}
+    .stat-grid,.two-col{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Directory view -->
+<div id="directory">
+  <div class="dir-header">
+    <h1>⚾ Provider Baseball Cards</h1>
+    <p>Click any provider to open their card</p>
+  </div>
+  <div class="dir-list" id="dir-list"></div>
+</div>
+
+<!-- Card view -->
+<div id="card-view">
+  <div class="back-btn" onclick="showDirectory()">← Back to all providers</div>
+  <div class="card" id="card-content"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// PROVIDER DATA — add new providers here
+// ═══════════════════════════════════════════════════════════════
+const providers = [
+  {
+    id: "indy-south",
+    number: "#001",
+    practice: "Indy South Foot & Ankle",
+    initials: "JS",
+    doctor: "Dr. Jeff Stevens",
+    cred: "DPM",
+    specialty: "Podiatry",
+    type: "Group",
+    providerCount: "2 DPMs",
+    phone: "317-300-0106",
+    surgery: "✓ Yes",
+    address: "7855 S. Emerson Ave, Suite T\nIndianapolis, IN 46237",
+    website: "indysouthfootandankle.com",
+    insurance: ["Medicare","Aetna","Anthem/BC","Cigna","Humana","United","+ more"],
+    hospitals: ["Community Hospital South","Franciscan Surgery Ctr","St. Francis Hospital","Indiana Surgery Ctr South"],
+    attrs: [
+      {text:"Board certified — foot & ankle surgery", active:true},
+      {text:"Board certified — podiatry", active:true},
+      {text:"Laser treatment", active:true},
+      {text:"EPAT therapy", active:true},
+      {text:"Custom orthotics", active:true},
+    ],
+    rtm: "unknown",
+    notes: "Graduated Ohio College of Podiatric Medicine 1988. Residency: Hillside Rehabilitation Hospital, Warren OH. Also see: Dr. Mark Runkle DPM (2nd provider). Accepts most commercial plans + workers' comp. Copays due at time of service.",
+    status: "Follow-Up",
+    statusColor: "#F5A623",
+  },
+  {
+    id: "nova-foot-ankle",
+    number: "#002",
+    practice: "NoVa Foot and Ankle",
+    initials: "NF",
+    doctor: "Dr. [See Providers Page]",
+    cred: "DPM",
+    specialty: "Podiatry",
+    type: "Group",
+    providerCount: "Multiple",
+    phone: "(703) 437-5353",
+    surgery: "✓ Yes",
+    address: "Herndon, VA & Springfield, VA",
+    website: "novafootandankle.com",
+    insurance: ["Medicare","Medicaid","BCBS","Aetna","Cigna","Humana","United"],
+    hospitals: ["Inova Fairfax","Reston Hospital","Virginia Hospital Ctr"],
+    attrs: [
+      {text:"Diabetic foot care", active:true},
+      {text:"Sports injuries", active:true},
+      {text:"Bunion/hammertoe surgery", active:true},
+      {text:"Custom orthotics", active:true},
+      {text:"Plantar fasciitis", active:true},
+    ],
+    rtm: "unknown",
+    notes: "Two locations — Herndon (703) 437-5353 and Springfield (703) 642-5340. Accepting new patients. Active on social @novafootdoc. Add notes after first contact.",
+    status: "Cold",
+    statusColor: "#95A5A6",
+  },
+  {
+    id: "dd-podiatry",
+    number: "#003",
+    practice: "DD Podiatry",
+    initials: "NT",
+    doctor: "Dr. Nam Tran",
+    cred: "DPM",
+    specialty: "Concierge Podiatry",
+    type: "Concierge / Private",
+    providerCount: "2 DPMs",
+    phone: "(301) 363-2676",
+    surgery: "✓ Minimally Invasive",
+    address: "Bethesda, MD & McLean, VA",
+    website: "ddpodiatry.com",
+    insurance: ["Private Pay","Select PPO","Verify at booking"],
+    hospitals: ["Sibley Memorial","Georgetown University Hospital"],
+    attrs: [
+      {text:"Regenerative medicine", active:true},
+      {text:"Shockwave therapy", active:true},
+      {text:"Biologic injections", active:true},
+      {text:"Minimally invasive surgery", active:true},
+      {text:"Medical pedicures", active:true},
+      {text:"60-min visits", active:true},
+    ],
+    rtm: "unknown",
+    notes: "Also Dr. Miriam Niktash DPM. Concierge model — 60-min visits, same/next-day appointments. Cutting-edge regenerative focus. High-income patient base. Pitch angle: RTM fits their premium monitoring approach perfectly.",
+    status: "Cold",
+    statusColor: "#95A5A6",
+  },
+  {
+    id: "maple-springs",
+    number: "#004",
+    practice: "Maple Springs Foot Center",
+    initials: "SS",
+    doctor: "Dr. Stuart R. Snyder",
+    cred: "DPM, FACFAS",
+    specialty: "Podiatry / Foot Surgery",
+    type: "Group",
+    providerCount: "3 DPMs",
+    phone: "(301) 762-3338",
+    surgery: "✓ Yes",
+    address: "Rockville / Silver Spring, MD area",
+    website: "drstuartsnyder.com",
+    insurance: ["Medicare","Medicaid","BCBS","Aetna","Cigna","Humana","United"],
+    hospitals: ["Holy Cross Hospital","Adventist HealthCare Shady Grove"],
+    attrs: [
+      {text:"Board certified — foot surgery (ABPS)", active:true},
+      {text:"Diabetic foot & wound care", active:true},
+      {text:"Laser toenail fungus treatment", active:true},
+      {text:"Custom orthotics", active:true},
+      {text:"Vascular testing (PAD)", active:true},
+      {text:"Habla Español", active:true},
+    ],
+    rtm: "unknown",
+    notes: "Also Dr. Sara Sharma and Dr. Gregory Aubertin. Board certified foot surgeon (ABPS) + Fellow ACFAS. Strong diabetic foot care program — great RTM angle. Spanish-speaking staff. Online booking available.",
+    status: "Cold",
+    statusColor: "#95A5A6",
+  },
+  {
+    id: "blanken-podiatry",
+    number: "#005",
+    practice: "Blanken Foot and Ankle",
+    initials: "SB",
+    doctor: "Dr. Steven Blanken",
+    cred: "DPM",
+    specialty: "Podiatry / Foot & Ankle Surgery",
+    type: "Group",
+    providerCount: "2 DPMs",
+    phone: "(301) 592-0505",
+    surgery: "✓ Yes",
+    address: "Silver Spring, MD",
+    website: "silverspringblankenpodiatry.com",
+    insurance: ["Medicare","Medicaid","BCBS","Aetna","Cigna","Humana","United"],
+    hospitals: ["Holy Cross Hospital","Washington Adventist Hospital"],
+    attrs: [
+      {text:"Foot & ankle surgery", active:true},
+      {text:"Amniotic stem cell therapy", active:true},
+      {text:"Custom orthotics", active:true},
+      {text:"Sports medicine", active:true},
+      {text:"Diabetic foot care", active:true},
+      {text:"Bunion/hammertoe surgery", active:true},
+    ],
+    rtm: "unknown",
+    notes: "Also Dr. Cassandre Charles DPM. Located in Silver Spring MD — local to you. Offers amniotic stem cell therapy — advanced regenerative focus, similar to DD Podiatry. Strong surgical practice. Good RTM angle for post-op monitoring.",
+    status: "Cold",
+    statusColor: "#95A5A6",
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// RTM config
+// ═══════════════════════════════════════════════════════════════
+const rtmOptions = [
+  {value:"unknown", label:"Unknown — needs outreach", color:"#ef9f27"},
+  {value:"yes",     label:"Yes — familiar with RTM",  color:"#639922"},
+  {value:"no",      label:"No — not familiar with RTM", color:"#e24b4a"},
+  {value:"interested", label:"Interested — wants more info", color:"#378add"},
+];
+
+const statusColors = {
+  "Follow-Up":"#F5A623","Cold":"#95A5A6","Warm":"#27AE60",
+  "Initial Call":"#3498DB","Proposal Sent":"#8E44AD"
+};
+
+// ═══════════════════════════════════════════════════════════════
+// Directory
+// ═══════════════════════════════════════════════════════════════
+function buildDirectory() {
+  const list = document.getElementById('dir-list');
+  list.innerHTML = '';
+  providers.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'dir-item';
+    item.innerHTML = `
+      <div class="dir-avatar">${p.initials}</div>
+      <div class="dir-info">
+        <div class="dir-name">${p.practice}</div>
+        <div class="dir-sub">${p.doctor} · ${p.specialty} · ${p.phone}</div>
+      </div>
+      <span class="dir-badge" style="background:${p.statusColor}22;color:${p.statusColor};border:1px solid ${p.statusColor}44">${p.status}</span>
+      <span class="dir-arrow">›</span>
+    `;
+    item.onclick = () => showCard(p.id);
+    list.appendChild(item);
+  });
+}
+
+function showDirectory() {
+  document.getElementById('directory').style.display = '';
+  document.getElementById('card-view').style.display = 'none';
+  history.pushState({}, '', window.location.pathname);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Card builder
+// ═══════════════════════════════════════════════════════════════
+function showCard(id) {
+  const p = providers.find(x => x.id === id);
+  if (!p) return;
+  history.pushState({}, '', '?id=' + id);
+  document.getElementById('directory').style.display = 'none';
+  const view = document.getElementById('card-view');
+  view.style.display = '';
+  document.getElementById('card-content').innerHTML = buildCardHTML(p);
+  initCard(p);
+  window.scrollTo(0,0);
+}
+
+function buildCardHTML(p) {
+  const rtmObj = rtmOptions.find(o => o.value === p.rtm) || rtmOptions[0];
+  return `
+    <div class="card-header">
+      <span class="practice-name" contenteditable="true">${p.practice}</span>
+      <span class="card-number" contenteditable="true">PROVIDER CARD ${p.number}</span>
+    </div>
+
+    <div class="card-top">
+      <div class="photo-col">
+        <div class="decision-label" contenteditable="true">Decision maker</div>
+        <div class="avatar" contenteditable="true">${p.initials}</div>
+        <div style="font-size:14px;font-weight:600;text-align:center;color:#1a1f2e;" contenteditable="true">${p.doctor}</div>
+        <div style="font-size:12px;color:#7a8599;text-align:center;" contenteditable="true">${p.cred}</div>
+        <div class="specialty-badge" contenteditable="true">${p.specialty}</div>
+      </div>
+      <div class="info-col">
+        <div class="section-label">Practice info</div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-label">Practice type</div><div class="stat-val" contenteditable="true">${p.type}</div></div>
+          <div class="stat-box"><div class="stat-label"># of providers</div><div class="stat-val" contenteditable="true">${p.providerCount}</div></div>
+          <div class="stat-box"><div class="stat-label">Phone</div><div class="stat-val" contenteditable="true">${p.phone}</div></div>
+          <div class="stat-box"><div class="stat-label">Surgery</div><div class="stat-val" contenteditable="true">${p.surgery}</div></div>
+        </div>
+        <div class="section-label">Location</div>
+        <div contenteditable="true" style="font-size:12px;color:#7a8599;line-height:1.6;">${p.address.replace('\n','<br>')}</div>
+        <div class="section-label">Website</div>
+        <div contenteditable="true" style="font-size:12px;color:#378add;">${p.website}</div>
+      </div>
+    </div>
+
+    <div class="card-mid">
+      <div class="two-col">
+        <div>
+          <div class="section-label">Insurance accepted <span class="edit-hint">type + enter</span></div>
+          <div class="tag-row" id="ins-tags"></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+            <input class="key-attr-input" id="new-ins" placeholder="Add insurance…" onkeydown="if(event.key==='Enter')addIns()"/>
+            <button class="add-btn" onclick="addIns()">+ Add</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">Hospital affiliations <span class="edit-hint">type + enter</span></div>
+          <div class="tag-row" id="hosp-tags"></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+            <input class="key-attr-input" id="new-hosp" placeholder="Add hospital…" onkeydown="if(event.key==='Enter')addHosp()"/>
+            <button class="add-btn" onclick="addHosp()">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="section-label">Key attributes <span class="edit-hint">click to toggle · × to remove</span></div>
+        <div class="tag-row" id="attr-tags"></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+          <input class="key-attr-input" id="new-attr" placeholder="Add attribute…" onkeydown="if(event.key==='Enter')addAttr()"/>
+          <button class="add-btn" onclick="addAttr()">+ Add</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="section-label">RTM awareness</div>
+        <div class="rtm-row">
+          <div class="rtm-dot" id="rtm-dot" style="background:${rtmObj.color};"></div>
+          <select class="rtm-select" id="rtm-sel" onchange="updateRtm()">
+            ${rtmOptions.map(o=>`<option value="${o.value}"${p.rtm===o.value?' selected':''}>${o.label}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-bottom">
+      <div class="section-label">Research notes / follow-up</div>
+      <textarea class="notes-area" placeholder="Add research notes, follow-up actions, contact history…">${p.notes}</textarea>
+    </div>
+
+    <div class="card-footer">
+      <span contenteditable="true">${p.website}</span>
+      <span contenteditable="true">Last updated: May 2026</span>
+    </div>
+  `;
+}
+
+function initCard(p) {
+  // Insurance tags
+  const insRow = document.getElementById('ins-tags');
+  p.insurance.forEach(t => insRow.appendChild(makeTag(t,'ins-tag','ins-tag-del')));
+
+  // Hospital tags
+  const hospRow = document.getElementById('hosp-tags');
+  p.hospitals.forEach(t => hospRow.appendChild(makeTag(t,'hosp-tag','hosp-tag-del')));
+
+  // Attribute tags
+  const attrRow = document.getElementById('attr-tags');
+  p.attrs.forEach(a => attrRow.appendChild(makeAttrTag(a.text, a.active)));
+}
+
+function makeTag(text, cls, delCls) {
+  const span = document.createElement('span');
+  span.className = cls;
+  const label = document.createElement('span');
+  label.textContent = text;
+  const del = document.createElement('button');
+  del.className = delCls;
+  del.textContent = '×';
+  del.onclick = () => span.remove();
+  span.appendChild(label);
+  span.appendChild(del);
+  return span;
+}
+
+function makeAttrTag(text, active) {
+  const span = document.createElement('span');
+  span.className = 'tag' + (active ? ' yes' : '');
+  const label = document.createElement('span');
+  label.textContent = text;
+  label.style.cursor = 'pointer';
+  label.onclick = () => {
+    if (span.classList.contains('yes')) { span.classList.remove('yes'); span.classList.add('no'); }
+    else if (span.classList.contains('no')) { span.classList.remove('no'); }
+    else { span.classList.add('yes'); }
+  };
+  const del = document.createElement('button');
+  del.className = 'tag-del';
+  del.textContent = '×';
+  del.onclick = () => span.remove();
+  span.appendChild(label);
+  span.appendChild(del);
+  return span;
+}
+
+function addIns() {
+  const input = document.getElementById('new-ins');
+  const val = input.value.trim(); if (!val) return;
+  document.getElementById('ins-tags').appendChild(makeTag(val,'ins-tag','ins-tag-del'));
+  input.value = '';
+}
+function addHosp() {
+  const input = document.getElementById('new-hosp');
+  const val = input.value.trim(); if (!val) return;
+  document.getElementById('hosp-tags').appendChild(makeTag(val,'hosp-tag','hosp-tag-del'));
+  input.value = '';
+}
+function addAttr() {
+  const input = document.getElementById('new-attr');
+  const val = input.value.trim(); if (!val) return;
+  document.getElementById('attr-tags').appendChild(makeAttrTag(val, true));
+  input.value = '';
+}
+function updateRtm() {
+  const val = document.getElementById('rtm-sel').value;
+  const color = rtmOptions.find(o=>o.value===val)?.color || '#ef9f27';
+  document.getElementById('rtm-dot').style.background = color;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════════════════════════
+buildDirectory();
+const urlId = new URLSearchParams(window.location.search).get('id');
+if (urlId) showCard(urlId);
+</script>
+</body>
+</html>
