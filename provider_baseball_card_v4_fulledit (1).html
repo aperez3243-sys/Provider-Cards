@@ -1,0 +1,233 @@
+
+<style>
+  .card-wrap{padding:1rem 0;font-family:var(--font-sans);}
+  .card{background:var(--color-background-primary);border:2px solid var(--color-border-primary);border-radius:var(--border-radius-lg);overflow:hidden;max-width:660px;margin:0 auto;}
+  .card-header{background:#1a3a5c;color:#fff;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;}
+  .card-header .practice-name{font-size:15px;font-weight:500;}
+  .card-header .card-number{font-size:11px;opacity:0.7;}
+  .card-top{display:grid;grid-template-columns:160px 1fr;border-bottom:1.5px solid var(--color-border-tertiary);}
+  .photo-col{border-right:1.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;gap:6px;background:var(--color-background-secondary);}
+  .decision-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.8px;color:#bf8c00;background:#faeeda;border:0.5px solid #ef9f27;border-radius:20px;padding:2px 10px;}
+  .avatar{width:80px;height:80px;border-radius:50%;background:#1a3a5c;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:500;color:#fff;cursor:pointer;position:relative;}
+  .avatar-hint{position:absolute;bottom:0;right:0;background:#378add;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .specialty-badge{background:#1a3a5c;color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;margin-top:2px;}
+  .info-col{padding:12px 14px;}
+  .section-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.8px;color:var(--color-text-secondary);margin:10px 0 4px;}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .stat-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:6px 10px;}
+  .stat-box .stat-label{font-size:10px;color:var(--color-text-secondary);}
+  .stat-box .stat-val{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+  .card-mid{border-bottom:1.5px solid var(--color-border-tertiary);padding:12px 14px;}
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+  .tag{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary);display:inline-flex;align-items:center;gap:5px;}
+  .tag.active-yes{background:#eaf3de;color:#3b6d11;border-color:#97c459;}
+  .tag.active-no{background:#fcebeb;color:#a32d2d;border-color:#f09595;}
+  .tag-label{cursor:pointer;user-select:none;}
+  .tag-label:hover{opacity:0.75;}
+  .tag-del{cursor:pointer;font-size:13px;line-height:1;opacity:0.5;border:none;background:none;padding:0;color:inherit;font-family:inherit;}
+  .tag-del:hover{opacity:1;}
+  .card-bottom{padding:12px 14px;}
+  .notes-area{width:100%;box-sizing:border-box;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:12px;color:var(--color-text-primary);min-height:100px;border:0.5px dashed var(--color-border-secondary);resize:vertical;font-family:var(--font-sans);line-height:1.6;}
+  .notes-area:focus{outline:none;border-color:#378add;}
+  .card-footer{background:#1a3a5c;color:rgba(255,255,255,0.7);font-size:10px;padding:5px 14px;display:flex;justify-content:space-between;}
+  .rtm-select{font-size:12px;padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans);cursor:pointer;}
+  .rtm-row{display:flex;align-items:center;gap:8px;margin-top:6px;}
+  .rtm-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .key-attr-input{font-size:11px;padding:4px 8px;border-radius:20px;border:0.5px dashed var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);font-family:var(--font-sans);width:130px;}
+  .key-attr-input:focus{outline:none;border-color:#378add;}
+  .add-btn{font-size:11px;padding:3px 10px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans);}
+  .add-btn:hover{background:var(--color-background-secondary);}
+  [contenteditable]{cursor:text;border-radius:4px;padding:1px 3px;transition:background 0.15s;}
+  [contenteditable]:hover{background:var(--color-background-secondary);}
+  [contenteditable]:focus{outline:none;background:var(--color-background-secondary);box-shadow:0 0 0 1.5px #378add;}
+  .edit-hint{font-size:10px;color:var(--color-text-secondary);opacity:0.6;margin-left:4px;font-style:italic;}
+  .ins-tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+  .ins-tag{font-size:11px;padding:3px 9px;border-radius:20px;background:#eaf3de;color:#3b6d11;border:0.5px solid #97c459;display:inline-flex;align-items:center;gap:5px;}
+  .ins-tag-del{cursor:pointer;font-size:13px;line-height:1;opacity:0.5;border:none;background:none;padding:0;color:inherit;font-family:inherit;}
+  .ins-tag-del:hover{opacity:1;}
+  .hosp-tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+  .hosp-tag{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary);display:inline-flex;align-items:center;gap:5px;}
+  .hosp-tag-del{cursor:pointer;font-size:13px;line-height:1;opacity:0.5;border:none;background:none;padding:0;color:inherit;font-family:inherit;}
+  .hosp-tag-del:hover{opacity:1;}
+</style>
+
+<div class="card-wrap">
+  <h2 class="sr-only">Fully editable provider cheat sheet card</h2>
+  <div class="card">
+
+    <div class="card-header">
+      <span class="practice-name" contenteditable="true" title="Click to edit">Indy South Foot &amp; Ankle</span>
+      <span class="card-number" contenteditable="true" title="Click to edit">PROVIDER CARD #001</span>
+    </div>
+
+    <div class="card-top">
+      <div class="photo-col">
+        <div class="decision-label" contenteditable="true" title="Click to edit">Decision maker</div>
+        <div class="avatar" title="Click to change initials" contenteditable="true">JS</div>
+        <div class="doc-name" contenteditable="true" title="Click to edit" style="font-size:14px;font-weight:500;text-align:center;color:var(--color-text-primary);">Dr. Jeff Stevens</div>
+        <div class="doc-cred" contenteditable="true" title="Click to edit" style="font-size:12px;color:var(--color-text-secondary);text-align:center;">DPM</div>
+        <div class="specialty-badge" contenteditable="true" title="Click to edit">Podiatry</div>
+      </div>
+      <div class="info-col">
+        <div class="section-label" style="margin-top:0;">Practice info</div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-label">Practice type</div><div class="stat-val" contenteditable="true" title="Click to edit">Group</div></div>
+          <div class="stat-box"><div class="stat-label"># of providers</div><div class="stat-val" contenteditable="true" title="Click to edit">2 DPMs</div></div>
+          <div class="stat-box"><div class="stat-label">Phone</div><div class="stat-val" contenteditable="true" title="Click to edit">317-300-0106</div></div>
+          <div class="stat-box"><div class="stat-label">Surgery</div><div class="stat-val" contenteditable="true" title="Click to edit">✓ Yes</div></div>
+        </div>
+        <div class="section-label">Location</div>
+        <div contenteditable="true" title="Click to edit" style="font-size:12px;color:var(--color-text-secondary);line-height:1.6;">7855 S. Emerson Ave, Suite T<br>Indianapolis, IN 46237</div>
+        <div class="section-label">Website</div>
+        <div contenteditable="true" title="Click to edit" style="font-size:12px;color:#378add;line-height:1.6;">indysouthfootandankle.com</div>
+      </div>
+    </div>
+
+    <div class="card-mid">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div class="section-label" style="margin-top:0;">Insurance accepted <span class="edit-hint">type + enter to add</span></div>
+          <div class="ins-tag-row" id="ins-tags"></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+            <input class="key-attr-input" id="new-ins" type="text" placeholder="Add insurance…" onkeydown="if(event.key==='Enter')addIns()" />
+            <button class="add-btn" onclick="addIns()">+ Add</button>
+          </div>
+        </div>
+        <div>
+          <div class="section-label" style="margin-top:0;">Hospital affiliations <span class="edit-hint">type + enter</span></div>
+          <div class="hosp-tag-row" id="hosp-tags"></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+            <input class="key-attr-input" id="new-hosp" type="text" placeholder="Add hospital…" onkeydown="if(event.key==='Enter')addHosp()" />
+            <button class="add-btn" onclick="addHosp()">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="section-label" style="margin-top:0;margin-bottom:6px;">Key attributes <span class="edit-hint">click label to toggle · × to delete</span></div>
+        <div class="tag-row" id="attr-tags"></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:8px;">
+          <input class="key-attr-input" id="new-attr" type="text" placeholder="Add attribute…" onkeydown="if(event.key==='Enter')addAttr()" />
+          <button class="add-btn" onclick="addAttr()">+ Add</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="section-label" style="margin-top:0;margin-bottom:4px;">RTM awareness</div>
+        <div class="rtm-row">
+          <div class="rtm-dot" id="rtm-dot" style="background:#ef9f27;"></div>
+          <select class="rtm-select" id="rtm-sel" onchange="updateRtm()">
+            <option value="unknown" selected>Unknown — needs outreach</option>
+            <option value="yes">Yes — familiar with RTM</option>
+            <option value="no">No — not familiar with RTM</option>
+            <option value="interested">Interested — wants more info</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-bottom">
+      <div class="section-label" style="margin-top:0;margin-bottom:6px;">Research notes / follow-up</div>
+      <textarea class="notes-area" placeholder="Add your research notes, follow-up actions, contact history…">Graduated Ohio College of Podiatric Medicine 1988. Residency: Hillside Rehabilitation Hospital, Warren OH. Also see: Dr. Mark Runkle DPM (2nd provider). Accepts most commercial plans + workers' comp. Copays due at time of service.</textarea>
+    </div>
+
+    <div class="card-footer">
+      <span contenteditable="true" title="Click to edit">indysouthfootandankle.com</span>
+      <span contenteditable="true" title="Click to edit">Last updated: May 2026</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const defaultAttrs = ["Board certified — foot & ankle surgery","Board certified — podiatry","Laser treatment","EPAT therapy","Custom orthotics"];
+const defaultIns = ["Medicare","Aetna","Anthem/BC","Cigna","Humana","United","+ more"];
+const defaultHosp = ["Community Hospital South","Franciscan Surgery Ctr","St. Francis Hospital","Indiana Surgery Ctr South"];
+
+function makeAttrTag(text) {
+  const span = document.createElement('span');
+  span.className = 'tag active-yes';
+  const label = document.createElement('span');
+  label.className = 'tag-label';
+  label.textContent = text;
+  label.onclick = () => toggleTag(span);
+  const del = document.createElement('button');
+  del.className = 'tag-del';
+  del.textContent = '×';
+  del.title = 'Remove';
+  del.onclick = () => span.remove();
+  span.appendChild(label);
+  span.appendChild(del);
+  return span;
+}
+
+function makeInsTag(text) {
+  const span = document.createElement('span');
+  span.className = 'ins-tag';
+  const label = document.createElement('span');
+  label.textContent = text;
+  const del = document.createElement('button');
+  del.className = 'ins-tag-del';
+  del.textContent = '×';
+  del.title = 'Remove';
+  del.onclick = () => span.remove();
+  span.appendChild(label);
+  span.appendChild(del);
+  return span;
+}
+
+function makeHospTag(text) {
+  const span = document.createElement('span');
+  span.className = 'hosp-tag';
+  const label = document.createElement('span');
+  label.textContent = text;
+  const del = document.createElement('button');
+  del.className = 'hosp-tag-del';
+  del.textContent = '×';
+  del.title = 'Remove';
+  del.onclick = () => span.remove();
+  span.appendChild(label);
+  span.appendChild(del);
+  return span;
+}
+
+function toggleTag(el) {
+  if (el.classList.contains('active-yes')) { el.classList.remove('active-yes'); el.classList.add('active-no'); }
+  else if (el.classList.contains('active-no')) { el.classList.remove('active-no'); }
+  else { el.classList.add('active-yes'); }
+}
+
+function addAttr() {
+  const input = document.getElementById('new-attr');
+  const val = input.value.trim();
+  if (!val) return;
+  document.getElementById('attr-tags').appendChild(makeAttrTag(val));
+  input.value = '';
+}
+
+function addIns() {
+  const input = document.getElementById('new-ins');
+  const val = input.value.trim();
+  if (!val) return;
+  document.getElementById('ins-tags').appendChild(makeInsTag(val));
+  input.value = '';
+}
+
+function addHosp() {
+  const input = document.getElementById('new-hosp');
+  const val = input.value.trim();
+  if (!val) return;
+  document.getElementById('hosp-tags').appendChild(makeHospTag(val));
+  input.value = '';
+}
+
+function updateRtm() {
+  const sel = document.getElementById('rtm-sel').value;
+  const dot = document.getElementById('rtm-dot');
+  const colors = { yes:'#639922', no:'#e24b4a', unknown:'#ef9f27', interested:'#378add' };
+  dot.style.background = colors[sel];
+}
+
+defaultAttrs.forEach(a => document.getElementById('attr-tags').appendChild(makeAttrTag(a)));
+defaultIns.forEach(a => document.getElementById('ins-tags').appendChild(makeInsTag(a)));
+defaultHosp.forEach(a => document.getElementById('hosp-tags').appendChild(makeHospTag(a)));
+</script>
